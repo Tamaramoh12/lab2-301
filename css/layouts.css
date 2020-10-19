@@ -1,1 +1,15 @@
-#container{margin: 5%;} .photo-template{ width: 30%;}
+div {
+    float: left;
+    margin: 40px;
+}
+
+img {
+    height: 200px;
+}
+
+h1 {
+    text-align: center;
+}
+.photo-template {
+    display:none;
+}  
