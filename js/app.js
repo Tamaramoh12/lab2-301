@@ -1,5 +1,9 @@
 'use strict';
 
+let objsArr = [];
+let keywordsArr = [];
+let uniqeKeyWords = [];
+
 // Creating the cinstructor
 function Image(image){
     this.image_url = image.image_url;
@@ -7,6 +11,8 @@ function Image(image){
     this.description = image.description;
     this.keyword = image.keyword;
     this.horns = image.horns;
+    objsArr.push(this);
+    keywordsArr.push(this.keyword);
 }
 
 // Render the content using clone
@@ -19,6 +25,7 @@ Image.prototype.render = function(){
     template.find('h2').text(this.title); 
     template.find('img').attr('src',this.image_url); 
     template.find('p').text(this.description); 
+    template.attr('class',this.keyword);
     template.removeClass('photo-template');
 }
 
@@ -33,9 +40,26 @@ Image.readJson = () => {
             let image = new Image(item);
             image.render();
         });
+        fillTheSelect();
     });
 };
 
+function fillTheSelect(){
+    keywordsArr.forEach(function(value,index){
+        if(uniqeKeyWords.indexOf(value) === -1 ){
+            uniqeKeyWords.push(value);
+            $('select').append(`<option value="${value}">${value}</option>`);
+        } 
+    });
+}
 
+$('select').click(function(){
+    
+    $('div').hide();
+    let selectval= '.' +$('select').val();
+    console.log(selectval);
+    $(selectval).show();
+});
 
+//document.ready
 $(() => Image.readJson());

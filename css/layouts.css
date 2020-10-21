@@ -1,15 +1,20 @@
+header select{
+    width: 25%;
+    padding: 10px;
+}
 div {
     float: left;
-    margin: 40px;
+    width: 30%;
+    margin: 10px 10px 10px 25px;
+    text-align: center;
+    border: 1px solid black;
 }
 
 img {
     height: 200px;
 }
 
-h1 {
-    text-align: center;
-}
+
 .photo-template {
     display:none;
 }  
