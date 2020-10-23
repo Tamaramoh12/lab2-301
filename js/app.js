@@ -2,9 +2,8 @@
 
 let objsArr = [];
 let keywordsArr = [];
-// let uniqeKeyWords = [];
 
-// Creating the cinstructor
+// Creating the constructor
 function Image(image){ //image is the JSON object
     this.image_url = image.image_url;
     this.title = image.title;
@@ -12,30 +11,28 @@ function Image(image){ //image is the JSON object
     this.keyword = image.keyword;
     this.horns = image.horns;
     objsArr.push(this);
-    // keywordsArr.push(this.keyword);
 }
 
 // Render the content using clone
 Image.prototype.render = function(){
-    //targeting the template and clone it
-    let template = $('.photo-template').clone();
-    //append the template to the parent main
-    $('main').append(template);
-    //use the DOM to create content
-    template.find('h2').text(this.title); 
-    template.find('img').attr('src',this.image_url); 
-    template.find('p').text(this.description); 
-    template.attr('class',this.keyword);
-    template.removeClass('photo-template');
+    let template = $('template').html();
+    let html = Mustache.render(template,this);
+    $('main').append(html);
 }
 
-Image.readJson = () => {
+Image.readJson = (filePath) => {
     const ajaxSetting = { //ajaxSetting is object
         method: 'get',
         dataType: 'json'
     };
 
-    $.ajax('data/page-1.json' , ajaxSetting).then(ourData => { //use the ajax(send ajax request) //data is an argument and we save the data inside it. 
+    $.ajax(filePath , ajaxSetting).then(ourData => { //use the ajax(send ajax request) //data is an argument and we save the data inside it. 
+        // $('div').show();
+        objsArr = [];
+        keywordsArr = [];
+        $('select').empty();
+        $('select').append('<option value="default">Filter by Keyword</option>');
+        $('div').remove();
         ourData.forEach(item => { 
             console.log(ourData);
             //create object
@@ -49,18 +46,9 @@ Image.readJson = () => {
             //render images
             image.render();
         });
-        // fillTheSelect();
     });
 };
 
-// function fillTheSelect(){
-//     keywordsArr.forEach(function(value,index){
-//         if(uniqeKeyWords.indexOf(value) === -1 ){
-//             uniqeKeyWords.push(value);
-//             $('select').append(`<option value="${value}">${value}</option>`);
-//         } 
-//     });
-// }
 
 $('select').click(function(){
     
@@ -70,6 +58,42 @@ $('select').click(function(){
     $(selectval).show();
 });
 
+$('button').on('click' , function(){
+    if(this.id === 'page1'){
+        Image.readJson('../data/page-1.json') ;
+    }
+    else if(this.id === 'page2'){
+        Image.readJson('../data/page-2.json');
+    }
+    else if(this.id === 'title-sort'){
+        sortImages('title-sort');
+    } 
+    else if(this.id === 'horns-sort'){
+        sortImages('horns-sort');
+    } 
+});
+
+function sortImages(sortingType){
+    $('div').remove();
+    if(sortingType == 'title-sort'){
+        objsArr.sort((a,b) =>{
+            if(a.title.toLowerCase() < b.title.toLowerCase()){
+                return -1;
+            }
+            if(a.title.toLowerCase() < b.title.toLowerCase()){
+                return 1;
+            }
+            return 0;
+        });     
+    } else{
+        objsArr.sort((a,b) =>{
+            return a.horns - b.horns;
+        })
+    }
+    objsArr.forEach(value =>{
+        value.render();
+    })
+}
 
 //document.ready ---> call the readJson function
-$(() => Image.readJson());
+$(() => Image.readJson('../data/page-1.json'));
